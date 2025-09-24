@@ -9,7 +9,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +29,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -46,6 +49,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.t1ejercicios.ui.theme.T1EjerciciosTheme
+import kotlinx.coroutines.delay
 
 
 class MainActivity : ComponentActivity() {
@@ -53,7 +57,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            AppNavegacion()
+            PerfilUsuarioIniciales()
         }
     }
 }
@@ -276,3 +280,95 @@ fun PantallaPerfil(navController: NavController) {
     }
 
 }
+
+@Composable
+fun Temporadizador() {
+    var tiempo by remember { mutableStateOf(10) }
+    var activo by remember { mutableStateOf(false) }
+
+    LaunchedEffect(activo) {
+        while (activo && tiempo > 0) {
+            delay(1000)
+            tiempo--
+        }
+        if (tiempo == 0) {
+            activo = false
+        }
+    }
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "$tiempo segundos",
+            fontSize = 48.sp,
+            color =
+                if (tiempo <= 3)
+                    Color.Red
+                else
+                    Color.Black
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            Button(
+                onClick = {
+                    tiempo = 10
+                    activo = true
+                }
+            ) {
+                Text("Iniciar")
+            }
+            Button(
+                onClick = {
+                    activo = !activo
+                }
+            ) {
+                Text(
+                    text = if (activo) "Pausar" else "Iniciar"
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun PerfilUsuarioIniciales() {
+    val nombre = "Rafa"
+    val apellido = "Aguila"
+    val iniciales = "${nombre.firstOrNull() ?: ""}${apellido.firstOrNull() ?: ""}"
+        .uppercase()
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier
+                .size(120.dp)
+                .clip(CircleShape)
+                .background(Color.Green),
+            contentAlignment = Alignment.Center
+        ){
+            Text(
+                text = iniciales,
+                color = Color.Gray,
+                fontSize = 36.sp
+            )
+        }
+        Spacer(Modifier.height(16.dp))
+        Text(
+            text = "Rafael Águila",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Text(
+            text = "Desarrollador android",
+            fontSize = 16.sp,
+            color = Color.Gray
+        )
+    }
+}
+
